@@ -1,0 +1,12 @@
+\BOOKMARK [1][-]{Section.0.Background and concepts.1}{Background and concepts}{}% 1
+\BOOKMARK [1][-]{Section.1.Basic usage and overview.1}{Basic usage and overview}{}% 2
+\BOOKMARK [2][-]{Subsection.2.0.Creating a document with listdown.2}{Creating a document with listdown}{Section.1.Basic usage and overview.1}% 3
+\BOOKMARK [2][-]{Subsection.2.1.Decorators.2}{Decorators}{Section.1.Basic usage and overview.1}% 4
+\BOOKMARK [1][-]{Section.2.Design.1}{Design}{}% 5
+\BOOKMARK [1][-]{Section.3.Advanced usage.1}{Advanced usage}{}% 6
+\BOOKMARK [2][-]{Subsection.4.0.Initialization code.2}{Initialization code}{Section.3.Advanced usage.1}% 7
+\BOOKMARK [2][-]{Subsection.4.1.R code chunk customization.2}{R code chunk customization}{Section.3.Advanced usage.1}% 8
+\BOOKMARK [2][-]{Subsection.4.2.Controlling options associated with a decorator.2}{Controlling options associated with a decorator}{Section.3.Advanced usage.1}% 9
+\BOOKMARK [2][-]{Subsection.4.3.Controlling chunk-level options.2}{Controlling chunk-level options}{Section.3.Advanced usage.1}% 10
+\BOOKMARK [1][-]{Section.4.A simple example: Reporting on the gtsummary::trial dataset.1}{A simple example: Reporting on the gtsummary::trial dataset}{}% 11
+\BOOKMARK [1][-]{Section.5.Conclusion.1}{Conclusion}{}% 12

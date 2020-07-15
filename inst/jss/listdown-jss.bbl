@@ -1,0 +1,91 @@
+\begin{thebibliography}{12}
+\newcommand{\enquote}[1]{``#1''}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\providecommand{\urlprefix}{URL }
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi:\discretionary{}{}{}#1}\else
+  \providecommand{\doi}{doi:\discretionary{}{}{}\begingroup
+  \urlstyle{rm}\Url}\fi
+\providecommand{\eprint}[2][]{\url{#2}}
+
+\bibitem[{Baumer \emph{et~al.}(2014)Baumer, Cetinkaya-Rundel, Bray, Loi, and
+  Horton}]{baumer2014}
+Baumer B, Cetinkaya-Rundel M, Bray A, Loi L, Horton NJ (2014).
+\newblock \enquote{R Markdown: Integrating a reproducible analysis tool into
+  introductory statistics.}
+\newblock \emph{arXiv preprint arXiv:1402.1894}.
+
+\bibitem[{Blischak \emph{et~al.}(2019)Blischak, Carbonetto, and
+  Stephens}]{blischak2019}
+Blischak JD, Carbonetto P, Stephens M (2019).
+\newblock \enquote{Creating and sharing reproducible research code the
+  workflowr way [version 1; peer review: 3 approved].}
+\newblock \emph{F1000Research}, \textbf{8}(1749).
+\newblock \doi{10.12688/f1000research.20843.1}.
+\newblock \urlprefix\url{https://doi.org/10.12688/f1000research.20843.1}.
+
+\bibitem[{Gamma \emph{et~al.}(1995)Gamma, Helm, Johnson, and
+  Vlissides}]{gamma1995}
+Gamma E, Helm R, Johnson R, Vlissides J (1995).
+\newblock \enquote{Design patterns: elements of reusable object-oriented
+  software.}
+\newblock \emph{Addison Wesley Longman, Inc, January}, \textbf{1}(5), 1.
+
+\bibitem[{Hafen and Schloerke(2020)}]{trelliscopejs}
+Hafen R, Schloerke B (2020).
+\newblock \emph{trelliscopejs: Create Interactive Trelliscope Displays}.
+\newblock R package version 0.2.4,
+  \urlprefix\url{https://CRAN.R-project.org/package=trelliscopejs}.
+
+\bibitem[{Henry and Wickham(2020)}]{purrr}
+Henry L, Wickham H (2020).
+\newblock \emph{purrr: Functional Programming Tools}.
+\newblock R package version 0.3.4,
+  \urlprefix\url{https://CRAN.R-project.org/package=purrr}.
+
+\bibitem[{Knuth(1984)}]{knuth1984}
+Knuth DE (1984).
+\newblock \enquote{Literate programming.}
+\newblock \emph{The Computer Journal}, \textbf{27}(2), 97--111.
+
+\bibitem[{Leisch(2002)}]{leisch2002}
+Leisch F (2002).
+\newblock \enquote{Sweave: Dynamic generation of statistical reports using
+  literate data analysis.}
+\newblock In \emph{Compstat}, pp. 575--580. Springer.
+
+\bibitem[{{R Core Team}(2012)}]{R}
+{R Core Team} (2012).
+\newblock \emph{R: A Language and Environment for Statistical Computing}.
+\newblock R Foundation for Statistical Computing, Vienna, Austria.
+\newblock {ISBN} 3-900051-07-0, \urlprefix\url{http://www.R-project.org/}.
+
+\bibitem[{RStudio(2020)}]{rmarkdownref}
+RStudio (2020).
+\newblock \emph{The R Markdown Reference}.
+\newblock
+  \urlprefix\url{https://rstudio.com/wp-content/uploads/2015/03/rmarkdown-reference.pdf}.
+
+\bibitem[{Stephens \emph{et~al.}(2020)Stephens, Simonov, Xie, Dong, Wickham,
+  Horner, {reikoch}, Beasley, O'Connor, and Warnes}]{yaml}
+Stephens J, Simonov K, Xie Y, Dong Z, Wickham H, Horner J, {reikoch}, Beasley
+  W, O'Connor B, Warnes GR (2020).
+\newblock \emph{yaml: Methods to Convert R Data to YAML and Back}.
+\newblock R package version 2.2.1,
+  \urlprefix\url{https://CRAN.R-project.org/package=yaml}.
+
+\bibitem[{Wickham(2016)}]{wickham2016}
+Wickham H (2016).
+\newblock \emph{ggplot2: Elegant Graphics for Data Analysis}.
+\newblock Springer-Verlag New York.
+\newblock ISBN 978-3-319-24277-4.
+\newblock \urlprefix\url{https://ggplot2.tidyverse.org}.
+
+\bibitem[{Xie \emph{et~al.}(2020)Xie, Cheng, and Tan}]{xie2020}
+Xie Y, Cheng J, Tan X (2020).
+\newblock \emph{DT: A Wrapper of the JavaScript Library 'DataTables'}.
+\newblock R package version 0.12,
+  \urlprefix\url{https://CRAN.R-project.org/package=DT}.
+
+\end{thebibliography}

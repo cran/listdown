@@ -66,8 +66,7 @@ The \pkg{listdown} package itself is relatively simple with 6 distinct methods t
 \item{\bf ld\_make\_chunks() }{- write a listdown object to a string}
 \item{\bf ld\_rmarkdown\_header() }{- create an R Markdown header}
 \item{\bf ld\_workflowr\_header() }{- create a worflowr header}
-\item{\bf listdown() }{- create a listdown object to create an \proglang{R} Markdown document}
-\item{\bf print.listdown()}{- print the listdown options for \proglang{R} Markdown document creation}
+\item{\bf listdown() }{- create a listdown object to create an R Markdown document}
 \end{itemize}
 
 The rest of this paper is structured as follows. The next section goes over basic usage and commentary. This section is meant to convey the basic approach used by the package and shows how to describe an output document using \pkg{listdown}, create a document, and change how the presentation of computational components can be specialized using \pkg{listdown} decorators. With the user accustomed to the package's basic usage, section 3 describes the design of the package. Section 4 goes over advanced usage of the package including adding initialization code to and outputted document as well as how to control chunk-level options. Section 5 provides a simplified case study of how the package is currently being used in clinical trial reporting. Section 6 concludes the paper with a few final remarks on the general types of applications where \pkg{listdown} has been shown effective.
@@ -76,94 +75,153 @@ The rest of this paper is structured as follows. The next section goes over basi
 
 Suppose we have just completed and analysis and have collected all of the results into a list where the list elements are roughly in the order we would like to present them in a document. It may be noted that this is not always how computational components derived from data analyses are collated. Often individual components are stored in multiple locations on a single machine or across machines. However, it is important to realize that even for analyses on large-scale data, the digital artifacts to be presented are relatively small. Centralizing them makes it easier to access them, since they don't need to be found in multiple locations. Also, storing them as a list provides a hierarchical structure that translates directly to a document as we will see below.
 
-As a starting point, we will consider the a list of visualizations from the Anscombe data set below. The list is composed of four \pkg{ggplot2} [@wickham2016] elements (named Linear, Non Linear, Outlier Vertical, and Outlier Horizontal) each containing a scatter plot from the Anscombe Quartet - made available in the \pkg{datasets} package [@R] as shown in Figure \ref{cc1}. From the \code{computational_components} list, we would like to create a document with four sections with names corresponding to the list names, each containing their respective visualizations. The structure of a document derived from the \code{computational_components} list can be visualized using the \code{ld_cc_dendro()} function, and its output is below.
+As a first example, we will consider the a list of visualizations from the Anscombe data set. The list is composed of four \pkg{ggplot2} [@wickham2016]elements (named Linear, Non Linear, Outlier Vertical, and Outlier Horizontal) each containing a scatter plot from the famous Anscombe Quartet - made available in the \pkg{datasets} package [@R]. From the \code{computational_components} list, we would like to create a document with four sections with names corresponding to the list names, each containing their respective visualizations.
 
-```{r cc1}
+
+```r
+# Use ggplot2 to create the visualizations.
 library(ggplot2)
 
-library(listdown)
-
+# Load the Anscombe Quartet.
 data(anscombe)
 
-computational_components <- list(
-  Linear = ggplot(anscombe, aes(x = x1, y = y1)) + geom_point(),
-  `Non Linear` = ggplot(anscombe, aes(x = x2, y = y2)) + geom_point(),
-  `Outlier Vertical`= ggplot(anscombe, aes(x = x3, y = y3)) + 
-    geom_point(),
-  `Outlier Horizontal` =  ggplot(anscombe, aes(x = x4, y = y4)) + 
-    geom_point())
+# Create the ggplot objects to display.
+  computational_components <- list(
+    Linear = ggplot(anscombe, aes(x = x1, y = y1)) + geom_point(),
+    `Non Linear` = ggplot(anscombe, aes(x = x2, y = y2)) + geom_point(),
+    `Outlier Vertical`= ggplot(anscombe, aes(x = x3, y = y3)) + 
+      geom_point(),
+    `Outlier Horizontal` =  ggplot(anscombe, aes(x = x4, y = y4)) + 
+      geom_point())
 
-ld_cc_dendro(computational_components)
+# Save the file to disk to be read by the output R Markdown document.
+saveRDS(computational_components, "comp-comp.rds")
 ```
 
 ## Creating a document with listdown
 
-Creating a document whose structure and content are described \code{computational_components} requires two steps. First, we will create a \code{listdown} object specifying how the \newline
-\code{computational_components} object will be loaded into the document, which libraries and code needs to be included, and how the list elements will be presented in the output R markdown document. A human-readable \code{print} function is included in the package and is the default output of the object. It should be noted that the output shows options that will be described and illustrated later.
+Creating a document from the \code{computational_components} requires two steps. First, we will create a \code{listdown} object that specifies how the \code{computational_components} object will be loaded into the document,  which libraries and code needs to be included, and how the list elements will be presented in the output R markdown document.
 
-```{r}
-saveRDS(computational_components, "comp-comp.rds")
+
+```r
+library(listdown)
 
 ld <- listdown(load_cc_expr = readRDS("comp-comp.rds"),
                package = "ggplot2")
-
-ld
 ```
 
 The \code{ld} object, along with the computational components in the \code{comp-comp.rds} file are sufficient to to create the sections, subsections, and \proglang{R} chunks of a document. The only other thing requires to create the document is the header. The listdown package currently supports regular R Markdown and \pkg{workflowr} as \code{yml} objects from the \pkg{yaml} package [@yaml]. These objects are stored as named lists in \proglang{R} and are easily modified to accommodate document parameters. A complete document can then be written to the console using the code shown below. It could easily be written to a file for rendering using the \code{writeLines()} function, for example.
 
-```{r eval = FALSE}
+
+```r
 doc <- c(
   as.character(ld_rmarkdown_header("Anscombe's Quartet",
                                    author = "Francis Anscombe",
                                    date = "1973")),
   ld_make_chunks(ld))
 
+# Write the document.
 writeLines("anscome-example.rmd")
 
+# Show the document.
 doc
 ```
 
-```{r eval = TRUE, echo = FALSE}
-doc <- c(
-  as.character(ld_rmarkdown_header("Anscombe's Quartet",
-                                   author = "Francis Anscombe",
-                                   date = "1973")),
-  ld_make_chunks(ld))
 
-doc
+```
+##  [1] "---"                                  
+##  [2] "title: Anscombe's Quartet"            
+##  [3] "author: Francis Anscombe"             
+##  [4] "date: '1973'"                         
+##  [5] "output: html_document"                
+##  [6] "---"                                  
+##  [7] ""                                     
+##  [8] "```{r}"                               
+##  [9] "library(ggplot2)"                     
+## [10] ""                                     
+## [11] "cc_list <- readRDS(\"comp-comp.rds\")"
+## [12] "```"                                  
+## [13] ""                                     
+## [14] "# Linear"                             
+## [15] ""                                     
+## [16] "```{r}"                               
+## [17] "cc_list$Linear"                       
+## [18] "```"                                  
+## [19] ""                                     
+## [20] "# Non Linear"                         
+## [21] ""                                     
+## [22] "```{r}"                               
+## [23] "cc_list$`Non Linear`"                 
+## [24] "```"                                  
+## [25] ""                                     
+## [26] "# Outlier Vertical"                   
+## [27] ""                                     
+## [28] "```{r}"                               
+## [29] "cc_list$`Outlier Vertical`"           
+## [30] "```"                                  
+## [31] ""                                     
+## [32] "# Outlier Horizontal"                 
+## [33] ""                                     
+## [34] "```{r}"                               
+## [35] "cc_list$`Outlier Horizontal`"         
+## [36] "```"
 ```
 
 The \code{listdown()} function provides _document-wide_ R chunk options for displaying computational components. The chunk options are exactly the same as those in the R markdown document and can be used to tailor the default presentation for a variety of needs. The complete set of options can be found in the R Markdown Reference Guide [@rmarkdownref]. As a concrete example, the code used to create present the plots could be hidden in the output document using the following code.
 
-```{r}
+
+```r
 ld <- listdown(load_cc_expr = readRDS("comp-comp.rds"), 
                package = "ggplot2",
                echo = FALSE)
 
+# Show the updated chunk where the library is loaded and data is read.
 ld_make_chunks(ld)[1:7]
+```
+
+```
+## [1] ""                                     
+## [2] "```{r echo = FALSE}"                  
+## [3] "library(ggplot2)"                     
+## [4] ""                                     
+## [5] "cc_list <- readRDS(\"comp-comp.rds\")"
+## [6] "```"                                  
+## [7] ""
 ```
 
 ## Decorators
 
 The first example is simple in part because the ggplot objects both contains the data we want to display and, at the same time, provides the mechanism for presenting them - rendering them in a graph. However, this is not always the case. The objects being stored in the list of computational components may not translate directly to the presentation in a document. In these cases, a function is needed that takes the list component and returns an object to be displayed. For example, suppose that, along with showing graphs from the Anscombe Quartet, we would like to include the data themselves. We could add the data to the \code{computational_components} list and then create the document with:
 
-```{r results="as.is"}
+
+```r
 computational_components$Data <- anscombe
 saveRDS(computational_components, "comp-comp.rds")
 ld_make_chunks(ld)[32:36]
+```
+
+```
+## [1] "# Data"              ""                    "```{r echo = FALSE}"
+## [4] "cc_list$Data"        "```"
 ```
 
 In this case, the \pkg{listdown} package will show the entire data set as is the default specified. However, suppose we do not want to show the entire data set in the document. This is common, especially when the data set is large and requires too much vertical space in the outputted document resulting in too much or irrelevant data being shown. Instead, we would like to output to an html document where the data is shown in a \code{datatable} thereby controlling the amount of real-estate needed to present the data and, at the same time, providing the user with interactivity to sort and search the data set.
 
 In \pkg{listdown}, a function or method that implements the presentation of a computational component is referred to as a _decorator_ since if follows the classic decorator pattern described in @gamma1995. A decorator takes the element that will be presented as an argument and returns an object for presentation in the output directory. A decorator is specified using the \code{decorator} parameter of the \code{listdown()} function using a named list where the name corresponds to the type and the element correspond to the function or method that will decorate an object of that type. For example, the \code{anscombe} data set can be decorated with the \code{DT::datatable()} function [@xie2020] as:
 
-```{r}
+
+```r
 ld <- listdown(load_cc_expr = readRDS("comp-comp.rds"), 
                package = c("ggplot2", "DT"),
                decorator = list(data.frame = datatable))
 
 ld_make_chunks(ld)[33:37]
+```
+
+```
+## [1] "# Data"                  ""                       
+## [3] "```{r}"                  "datatable(cc_list$Data)"
+## [5] "```"
 ```
 
 List names in the \code{decorator} argument provide a key to which a function or method is mapped. The underlying decorator resolution is implemented for a given computational component by going through decorator names sequentially to see if the component inherits from the name using the \code{inherits()} function. The function or method is selected from the corresponding name which the element first inherits from. This means that when customizing the presentation of objects that inherit from a common class, the more abstract classes should appear at the end of the list. This will ensure that specialized classes will be encountered first in the resolution process. It should be noted that an object's type is first checked against the decorator name list and then checked to see if it is a list. This allows a user to both decorate a list and retain \code{"list"} in its class attributes.
@@ -173,9 +231,11 @@ A separate argument, \code{default_decorator}, allows the user to specify the de
 # Design
 
 A \pkg{listdown} object specifies the location of a list of computational components and options for presenting those components in an R Markdown document. The list is a hierarchical data structure that also provides the structure of the outputted document. A corresponding document has two sections "Iris" and "Sepal.Length". The latter has three subsections "Sepal.Width", "Petal.Length", and "Colored". The "Colored" subsection has two subsubsections, "Sepal.Width" and "Petal.Length".
-The structure can once again be seen using the \code{ld_cc_dendro()} function.
+The structure can be seen using the \code{ld_cc_dendro()} function.
 
-```{r}
+
+```r
+# Create a more hierarchical list of computational components.
 comp_comp2 <- list(
   Iris = iris,
   Sepal.Length = list(
@@ -191,7 +251,25 @@ comp_comp2 <- list(
                             aes(x = Sepal.Length, y = Petal.Length, 
                                 color = Species)) + geom_point())))
 
+# Create the dendrogram.
 ld_cc_dendro(comp_comp2)
+```
+
+```
+## 
+## comp_comp2
+##   |-- Iris
+##   |  o-- object of type(s):data.frame
+##   o-- Sepal.Length
+##    |-- Sepal.Width
+##    |  o-- object of type(s):gg ggplot
+##    |-- Petal.Length
+##    |  o-- object of type(s):gg ggplot
+##    o-- Colored
+##     |-- Sepal.Width
+##     |  o-- object of type(s):gg ggplot
+##     o-- Petal.Length
+##        o-- object of type(s):gg ggplot
 ```
 
 Both the \code{ld_cc_dendro()} and \code{ld_make_chunks()} functions work by recursively descending the computational components list depth-first. If the list containing and element has a name, it is written to the output as a section, subsection, subsubsection, etc. to a return string. If the visited list element is itself a list, then the same procedure is called on the child list through a recursive call. If the element is not a list, then it is outputted inside an R Markdown chunk in the return string using the appropriate decorator.
@@ -202,7 +280,8 @@ Both the \code{ld_cc_dendro()} and \code{ld_make_chunks()} functions work by rec
 
 The \code{listdown()} function facilitates the insertion of initialization code through the \code{init_expr} argument. Code is inserted immediately after the libraries are loaded in the R Markdown document. In general, it is suggested that the number of initial expressions be kept small so that the \proglang{R} Markdown document is easy to read. If a large number of functions are required by the target \proglang{R} Markdown document then they can be put into a file and sourced using the initial expression. As an example, suppose we are creating an html document and presenting data using the \code{datatable()} function. However, we do not want to include the search capabilities provided. This can be easily accomplished by creating a new function, \code{datatable_no_search()}, created using the \code{partial()} function \cite{purrr} to partially apply \code{list(dom = 't')} to the \code{options} argument of \code{datatable}.
 
-```{r}
+
+```r
 saveRDS(comp_comp2, "comp-comp2.rds")
 ld <- listdown(load_cc_expr = readRDS("comp-comp2.rds"),
                package = c("ggplot2", "DT", "purrr"),
@@ -217,6 +296,18 @@ ld <- listdown(load_cc_expr = readRDS("comp-comp2.rds"),
 ld_make_chunks(ld)[2:10]
 ```
 
+```
+## [1] "```{r echo = FALSE}"                                                   
+## [2] "library(ggplot2)"                                                      
+## [3] "library(DT)"                                                           
+## [4] "library(purrr)"                                                        
+## [5] ""                                                                      
+## [6] "cc_list <- readRDS(\"comp-comp2.rds\")"                                
+## [7] ""                                                                      
+## [8] "datatable_no_search <- partial(datatable, options = list(dom = \"t\"))"
+## [9] "```"
+```
+
 ## R code chunk customization
 
 The \pkg{listdown} package supports also supports capabilities to further customize the presentation by specifying \proglang{R} code chunk options in the \proglang{R} Markdown document in two distinct ways. The first is used when the options we would like to specify is tied to type of the object being presented. This can be though of as a chunk-option decorator. The second is use for changing the options for an individual chunk in an ad hoc manner.
@@ -227,7 +318,8 @@ With three different modes of chunk customization it should be noted that the in
 
 The document-wide chunk option specification provides the default chunk options for output documents generated using \pkg{listdown}. However, the presentation of a data object often varies by type. For example, we may want to specify the height and width of a graph, but not a table. This is accomplished in the \pkg{listdown} package when a \code{listdown} object is created using the \code{decorator_chunk_opts} option in the ]code{listdown()} function. For example, associating all \code{ggplot} objects with \proglang{R} chunks having a width of 100 and a height of 200 can be accomplished with the following code and it can be seen that only chunk options associated with a plot are modified.
 
-```{r}
+
+```r
 ld <- listdown(load_cc_expr = readRDS("comp-comp2.rds"),
                package = c("ggplot2", "DT", "purrr"),
                decorator_chunk_opts = 
@@ -242,14 +334,34 @@ ld <- listdown(load_cc_expr = readRDS("comp-comp2.rds"),
 ld_make_chunks(ld)[c(12:16, 19:24)]
 ```
 
+```
+##  [1] "# Iris"                                                
+##  [2] ""                                                      
+##  [3] "```{r echo = FALSE}"                                   
+##  [4] "cc_list$Iris"                                          
+##  [5] "```"                                                   
+##  [6] ""                                                      
+##  [7] "## Sepal.Width"                                        
+##  [8] ""                                                      
+##  [9] "```{r echo = FALSE, fig.width = 100, fig.height = 200}"
+## [10] "cc_list$Sepal.Length$Sepal.Width"                      
+## [11] "```"
+```
+
 ## Controlling chunk-level options
 
 Along with providing decorator-wide chunk options, it is also possible to control individual chunk options. The capability is distinct from the document-wide and decorator-wide specification of options in that it must be applied to the computational component list element whose associated options will be modified, rather than the \code{listdown} object. This is because the \code{listdown} only specifies how classes of objects should be presented. To modify the chunk options associated with a specific list element the list element is provided with a set of attributes that can be queried by the \code{ld_chunk_opts()} function as the output document is being generated. Because of the ad hoc nature of this capability, its use is discouraged. A better solution, that maintains the behavior is to add class information to the list element and specify decorator-wide chunk options for the new class. This maintains the separation of the computational component list, which maintains the document structure and data for presentation from the specification of how the document will be created and rendered.
 
-```{r}
+
+```r
 comp_comp2$Iris <- ld_chunk_opts(comp_comp2$Iris, echo = TRUE)
 saveRDS(comp_comp2, "comp-comp2.rds")
 ld_make_chunks(ld)[12:16]
+```
+
+```
+## [1] "# Iris"             ""                   "```{r echo = TRUE}"
+## [4] "cc_list$Iris"       "```"
 ```
 
 # A simple example: Reporting on the gtsummary::trial dataset
@@ -261,18 +373,22 @@ In practice we generally separate the data cleaning, exploration, analysis, moni
 
 The code creates a computational component list containing a table of the patient characteristics along with survival plots by overall survival, survival by stage, and survival by grade. The table is an element of a named list called "Table 1" and then survival plots are elements of named lists indicating the conditioning variable. The structure can be seen in the dendrogram below.
 
-```{r, eval = TRUE, message=FALSE, warning=FALSE}
+
+```r
 library(gtsummary)
 library(dplyr)
 library(survival)
 library(survminer)
 library(rmarkdown)
 
+# Function to create the computational components.
 make_surv_cc <- function(trial, treat, surv_cond_chars) {
+  # Create Table 1 by treatment
   table_1 <- trial %>%
     tbl_summary(by = all_of(treat)) %>%
     gtsummary::as_flextable()
 
+  # Create survival plots base on survival characteristics
   scs <- lapply(c("1", surv_cond_chars),
                 function(sc) {
                   sprintf("Surv(ttdeath, death) ~ %s + %s", treat, sc) %>%
@@ -284,29 +400,51 @@ make_surv_cc <- function(trial, treat, surv_cond_chars) {
   list(`Table 1` = table_1, `Survival Plots` = scs)
 }
 
+# Create the computational components and write to surv-cc.rds.
 surv_cc <- make_surv_cc(trial, treat = "trt",
                         surv_cond_chars = c("stage", "grade"))
 
 ld_cc_dendro(surv_cc)
 ```
 
+```
+## 
+## surv_cc
+##   |-- Table 1
+##   |  o-- object of type(s):flextable
+##   o-- Survival Plots
+##    |-- Overall
+##    |  o-- object of type(s):ggsurvplot ggsurv list
+##    |-- Stage
+##    |  o-- object of type(s):ggsurvplot ggsurv list
+##    o-- Grade
+##       o-- object of type(s):ggsurvplot ggsurv list
+```
+
 As shown before, the report is created by saving the computational components, creating a \code{listdown} object, writing the \proglang{R} Markdown document, and rendering it. The resulting document, trial-report.html, can then be placed in a shared space where it can be viewed and interpreted by stakeholders in the clinical trial. The \proglang{R} Markdown document created by this code is shown in supplementary materials.
 
-```{r eval = TRUE, message = FALSE, warning = FALSE}
+
+```r
+# Turn the survplot object into a list to show the individual components.
 class(surv_cc$`Survival Plots`$Overall) <- 
   class(surv_cc$`Survival Plots`$Stage) <-
   class(surv_cc$`Survival Plots`$Grade) <- "list"
 
+# Create a tab for each element of the survplot object.
 names(surv_cc$`Survival Plots`) <- 
   paste(names(surv_cc$`Survival Plots`), "{.tabset}")
 
+# Rename the elements
 names(surv_cc$`Survival Plots`$`Overall {.tabset}`) <- 
   names(surv_cc$`Survival Plots`$`Stage {.tabset}`) <- 
   names(surv_cc$`Survival Plots`$`Grade {.tabset}`) <- 
   c("Plot", "Data", "Table")
   
+# Save the updated object for presentation.
 saveRDS(surv_cc, "surv-cc.rds")
 
+# Create the listdown object with appropriate dependencies
+# and presentation parameters.
 ld_surv <- listdown(load_cc_expr = readRDS("surv-cc.rds"),
                     package = c("gtsummary", "flextable", "DT", 
                                 "ggplot2"),
@@ -320,12 +458,15 @@ ld_surv <- listdown(load_cc_expr = readRDS("surv-cc.rds"),
                     fig.width = 7,
                     fig.height = 4.5)
 
+# Write an R Markdown header and chunks derived from the 
+# computational components and listdown object to trial-report.rmd.
 writeLines(
   paste(c(
     as.character(ld_rmarkdown_header("Simple Trial Report")),
     ld_make_chunks(ld_surv))),
   "trial-report.rmd")
 
+# Render the R Markdown file to html and show it.
 render("trial-report.rmd", quiet = TRUE)
 browseURL("trial-report.html")
 ```
