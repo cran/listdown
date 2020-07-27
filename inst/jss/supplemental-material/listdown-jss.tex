@@ -8,7 +8,7 @@
 
 \author{
 Michael Kane\\Yale University \And Xun (Tony) Jiang\\Amgen
-Inc \And Simon Urbanek\\The University of Aukland
+Inc. \And Simon Urbanek\\The University of Aukland
 }
 \title{On the Programmatic Generation of Reproducible Documents}
 
@@ -52,7 +52,7 @@ presentation}
   E-mail: \href{mailto:michael.kane@yale.edu}{\nolinkurl{michael.kane@yale.edu}}\\
   
       Xun (Tony) Jiang\\
-  Amgen Inc\\
+  Amgen Inc.\\
   One Amgen Center DriveThousand Oaks, CA 91320-1799, USA\\
   E-mail: \href{mailto:xunj@amgen.com}{\nolinkurl{xunj@amgen.com}}\\
   
@@ -245,26 +245,20 @@ using the \code{ld_cc_dendro()} function, and its output is below.
 \begin{CodeChunk}
 
 \begin{CodeInput}
-R> # Use ggplot2 to create the visualizations.
 R> library(ggplot2)
 R> 
-R> # Use listdown to show the structure of an R Markdown document
-R> # created from a list
 R> library(listdown)
 R> 
-R> # Load the Anscombe Quartet.
 R> data(anscombe)
 R> 
-R> # Create the ggplot objects to display.
-R>   computational_components <- list(
-R+     Linear = ggplot(anscombe, aes(x = x1, y = y1)) + geom_point(),
-R+     `Non Linear` = ggplot(anscombe, aes(x = x2, y = y2)) + geom_point(),
-R+     `Outlier Vertical`= ggplot(anscombe, aes(x = x3, y = y3)) + 
-R+       geom_point(),
-R+     `Outlier Horizontal` =  ggplot(anscombe, aes(x = x4, y = y4)) + 
-R+       geom_point())
+R> computational_components <- list(
+R+   Linear = ggplot(anscombe, aes(x = x1, y = y1)) + geom_point(),
+R+   `Non Linear` = ggplot(anscombe, aes(x = x2, y = y2)) + geom_point(),
+R+   `Outlier Vertical`= ggplot(anscombe, aes(x = x3, y = y3)) + 
+R+     geom_point(),
+R+   `Outlier Horizontal` =  ggplot(anscombe, aes(x = x4, y = y4)) + 
+R+     geom_point())
 R> 
-R> # Show the structure of the R Markdown document to be created.
 R> ld_cc_dendro(computational_components)
 \end{CodeInput}
 
@@ -291,12 +285,14 @@ Creating a document whose structure and content are described
 create a \code{listdown} object specifying how the \newline
 \code{computational_components} object will be loaded into the document,
 which libraries and code needs to be included, and how the list elements
-will be presented in the output R markdown document.
+will be presented in the output R markdown document. A human-readable
+\code{print} function is included in the package and is the default
+output of the object. It should be noted that the output shows options
+that will be described and illustrated later.
 
 \begin{CodeChunk}
 
 \begin{CodeInput}
-R> # Save the file to disk to be read by the output R Markdown document.
 R> saveRDS(computational_components, "comp-comp.rds")
 R> 
 R> ld <- listdown(load_cc_expr = readRDS("comp-comp.rds"),
@@ -353,10 +349,8 @@ R>                                    author = "Francis Anscombe",
 R>                                    date = "1973")),
 R>   ld_make_chunks(ld))
 R> 
-R> # Write the document.
 R> writeLines("anscome-example.rmd")
 R> 
-R> # Show the document.
 R> doc
 \end{CodeInput}
 \end{CodeChunk}
@@ -419,7 +413,6 @@ R> ld <- listdown(load_cc_expr = readRDS("comp-comp.rds"),
 R+                package = "ggplot2",
 R+                echo = FALSE)
 R> 
-R> # Show the updated chunk where the library is loaded and data is read.
 R> ld_make_chunks(ld)[1:7]
 \end{CodeInput}
 
@@ -540,7 +533,6 @@ The ``Colored'' subsection has two subsubsections, ``Sepal.Width'' and
 \begin{CodeChunk}
 
 \begin{CodeInput}
-R> # Create a more hierarchical list of computational components.
 R> comp_comp2 <- list(
 R+   Iris = iris,
 R+   Sepal.Length = list(
@@ -556,7 +548,6 @@ R+       Petal.Length = ggplot(iris,
 R+                             aes(x = Sepal.Length, y = Petal.Length, 
 R+                                 color = Species)) + geom_point())))
 R> 
-R> # Create the dendrogram.
 R> ld_cc_dendro(comp_comp2)
 \end{CodeInput}
 
@@ -786,14 +777,11 @@ R> library(survival)
 R> library(survminer)
 R> library(rmarkdown)
 R> 
-R> # Function to create the computational components.
 R> make_surv_cc <- function(trial, treat, surv_cond_chars) {
-R+   # Create Table 1 by treatment
 R+   table_1 <- trial %>%
 R+     tbl_summary(by = all_of(treat)) %>%
 R+     gtsummary::as_flextable()
 R+ 
-R+   # Create survival plots base on survival characteristics
 R+   scs <- lapply(c("1", surv_cond_chars),
 R+                 function(sc) {
 R+                   sprintf("Surv(ttdeath, death) ~ %s + %s", treat, sc) %>%
@@ -805,7 +793,6 @@ R+   names(scs) <- c("Overall", tools::toTitleCase(surv_cond_chars))
 R+   list(`Table 1` = table_1, `Survival Plots` = scs)
 R+ }
 R> 
-R> # Create the computational components and write to surv-cc.rds.
 R> surv_cc <- make_surv_cc(trial, treat = "trt",
 R+                         surv_cond_chars = c("stage", "grade"))
 R> 
@@ -838,26 +825,20 @@ supplementary materials.
 \begin{CodeChunk}
 
 \begin{CodeInput}
-R> # Turn the survplot object into a list to show the individual components.
 R> class(surv_cc$`Survival Plots`$Overall) <- 
 R+   class(surv_cc$`Survival Plots`$Stage) <-
 R+   class(surv_cc$`Survival Plots`$Grade) <- "list"
 R> 
-R> # Create a tab for each element of the survplot object.
 R> names(surv_cc$`Survival Plots`) <- 
 R+   paste(names(surv_cc$`Survival Plots`), "{.tabset}")
 R> 
-R> # Rename the elements
 R> names(surv_cc$`Survival Plots`$`Overall {.tabset}`) <- 
 R+   names(surv_cc$`Survival Plots`$`Stage {.tabset}`) <- 
 R+   names(surv_cc$`Survival Plots`$`Grade {.tabset}`) <- 
 R+   c("Plot", "Data", "Table")
 R>   
-R> # Save the updated object for presentation.
 R> saveRDS(surv_cc, "surv-cc.rds")
 R> 
-R> # Create the listdown object with appropriate dependencies
-R> # and presentation parameters.
 R> ld_surv <- listdown(load_cc_expr = readRDS("surv-cc.rds"),
 R+                     package = c("gtsummary", "flextable", "DT", 
 R+                                 "ggplot2"),
@@ -871,15 +852,12 @@ R+                     warning = FALSE,
 R+                     fig.width = 7,
 R+                     fig.height = 4.5)
 R> 
-R> # Write an R Markdown header and chunks derived from the 
-R> # computational components and listdown object to trial-report.rmd.
 R> writeLines(
 R+   paste(c(
 R+     as.character(ld_rmarkdown_header("Simple Trial Report")),
 R+     ld_make_chunks(ld_surv))),
 R+   "trial-report.rmd")
 R> 
-R> # Render the R Markdown file to html and show it.
 R> render("trial-report.rmd", quiet = TRUE)
 R> browseURL("trial-report.html")
 \end{CodeInput}
