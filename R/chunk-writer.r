@@ -5,14 +5,9 @@
 #' unquoted expression indicating how the presentation list will be loaded.
 #' In addition, libraries required by the outputted document and other
 #' parameters can be specified.
-#' @param load_cc_expr either an unquoted expression or a character string
-#' that will be turned into an unquoted expression via str2lang to load the 
-#' presentation list.
 #' @param package a quoted list of package required by the outputted document.
 #' @param decorator a named list mapping the potential types of list elements
 #' to a decorator function.
-#' @param init_expr an initial expression that will be added to the outputted
-#' document after the libraries have been called.
 #' @param decorator_chunk_opts a named list mapping the potential types of list
 #' elements to chunk options that should be included for those types.
 #' @param default_decorator the decorator to use for list elements whose type
@@ -20,17 +15,29 @@
 #' elements will not be included when the chunks are written. By default
 #' this is identity, meaning that the elements will be passed directly
 #' (through the identity() function).
+#' @param setup_expr an expression that is added before package are 
+#' loaded. The expression is put into a chunk named `setup` with option
+#' `include = FALSE` and is intended for initializing the document. For
+#' example the expression `knitr::opts_chunk$set(echo = FALSE)` could be
+#' used to turn echo'ing off for the entire document.
+#' @param init_expr an initial expression that will be added to the outputted
+#' document after the libraries have been called. This expression appears
+#' after packages are loaded and before data is read.
+#' @param load_cc_expr either an unquoted expression or a character string
+#' that will be turned into an unquoted expression via str2lang to load the 
+#' presentation list.
 #' @param ... default options sent to the chunks of the outputted document.
 #' @param chunk_opts a named list of options sent to the chunks of outputted
 #' documents. Note: takes priority over argument provided to ...
 #' @importFrom crayon red
 #' @export
-listdown <- function(load_cc_expr,
-                     package = NULL,
+listdown <- function(package = NULL,
                      decorator = list(),
-                     init_expr = NULL,
                      decorator_chunk_opts = list(),
                      default_decorator = identity,
+                     setup_expr = NULL,
+                     init_expr = NULL,
+                     load_cc_expr = NULL,
                      ...,
                      chunk_opts = NULL) {
 
@@ -64,29 +71,20 @@ listdown <- function(load_cc_expr,
   if ( !("decorator" %in% names(match.call())) ) {
     decorator <- NULL
   } else {
-    decorator <- as.list(match.call()$decorator)[-1]
+    if (as.character(as.list(match.call()$decorator)[[1]]) == "list") {
+      decorator <- as.list(match.call()$decorator)[-1]
+    } else {
+      decorator <- eval(match.call()$decorator)
+    }
   }
-  if (is.character(match.call()$load_cc_expr)) {
-    # If it's a string literal, then call str2lang on it.
-    load_cc_expr <- str2lang(match.call()$load_cc_expr)
-  } else {
-    load_cc_expr <- tryCatch( {
-        lce <- eval(match.call()$load_cc_expr)
-        if (is.character(lce)) {
-          # It's a variable holding a string. Call str2lang on it.
-          str2lang(lce)
-        } else {
-          # It's a bare expression.
-          match.call()$load_cc_expr
-        }
-      },
-      # It's a bare expression.
-      finally = match.call()$load_cc_expr)
+  if (!is.null(load_cc_expr)) {
+    load_cc_expr <- create_load_cc_expr(match.call()$load_cc_expr)
   }
   ret <- list(load_cc_expr = load_cc_expr,
               decorator = decorator,
               package = package,
               init_expr = match.call()$init_expr,
+              setup_expr = match.call()$setup_expr,
               decorator_chunk_opts = decorator_chunk_opts,
               default_decorator = default_decorator,
               chunk_opts = chunk_opts)
@@ -101,16 +99,26 @@ print.listdown <- function(x, ...) {
   cat(bold("\nListdown object description\n"))
   cat("\n")
   if ("package" %in% names(x)) {
-    cat(bold("Package(s) imported:\n"))
+    cat(bold("    Package(s) imported:\n"))
     for (package in x$package) {
       cat("\t", package, "\n", sep = "")
     }
   } else {
     warning(yellow("No packages imported."))
   }
+  if ("setup_expr" %in% names(x)) {
+    cat("\n")
+    cat(bold("    Setup expression(s) (run before packages are loaded):\n"))
+    cat("\t")
+    if (length(x$setup_expr) == 0) {
+      cat("(none)\n")
+    } else {
+      cat(deparse(x$setup_expr), sep = "\n\t")
+    }
+  }
   if ("init_expr" %in% names(x)) {
     cat("\n")
-    cat(bold("Initial expression(s) (run after packages are loaded):\n"))
+    cat(bold("    Initial expression(s) (run after packages are loaded):\n"))
     cat("\t")
     if (length(x$init_expr) == 0) {
       cat("(none)\n")
@@ -120,15 +128,15 @@ print.listdown <- function(x, ...) {
   }
   if ("load_cc_expr" %in% names(x)) {
     cat("\n")
-    cat(bold("Expression to read data:\n"))
+    cat(bold("    Expression to read data:\n"))
     cat("\t", deparse(x$load_cc_expr), "\n", sep = "")
   } else {
     warning(yellow("No load_cc expression provided."))
   }
   if ("decorator" %in% names(x)) {
     cat("\n")
-    cat(bold("Decorator(s):\n"))
-    if (length(x$decorators) == 0) {
+    cat(bold("    Decorator(s):\n"))
+    if (length(x$decorator) == 0) {
       cat("\t(none)\n")
     } else {
       ns <- format(c("Type", names(x$decorator)))
@@ -144,24 +152,25 @@ print.listdown <- function(x, ...) {
   }
   if ("default_decorator" %in% names(x)) {
     cat("\n")
-    cat(bold("Defaut decorator:\n"))
+    cat(bold("    Defaut decorator:\n"))
     cat("\t", deparse(x$default_decorator), "\n", sep = "")
   }
   if ("chunk_opts" %in% names(x)) { 
     cat("\n")
-    cat(bold("Chunk option(s):\n"))
+    cat(bold("    Chunk option(s):\n"))
     if (length(x$chunk_opts) == 0) {
       cat("\t(none)\n")
     } else {
-      for (i in seq_len(x$chunk_opts)) {
-        cat("\t", names(x$chunk_opts)[i], " ", deparse(x$chunk_opts[[i]]), "\n",
+      for (i in seq_along(x$chunk_opts)) {
+        cat("\t", names(x$chunk_opts)[i], " = ", 
+            deparse(x$chunk_opts[[i]]), "\n",
             sep = "")
       }
     }
   }
   if ("decorator_chunk_opts" %in% names(x)) {
     cat("\n")
-    cat(bold("Decorator chunk option(s):\n"))
+    cat(bold("    Decorator chunk option(s):\n"))
     if (length(x$decorator_chunk_opts) == 0) {
       cat("\t(none)\n")
     } else {
@@ -210,42 +219,51 @@ ld_make_chunks.default <- function(ld) {
            paste(class(ld), collapse = ":"), ".", sep = ""))
 }
 
+expr_to_string <- function(expr) {
+  if (deparse(expr[[1]]) == "{") {
+    unlist(lapply(expr[-1], function(x) c(deparse(x))))
+  } else {
+    deparse(expr)
+  }
+}
+
 #' @export
 ld_make_chunks.listdown <- function(ld) {
-
+  if (is.null(ld$load_cc_expr)) {
+    stop("The load_cc_expr needs to be specified. ",
+         "Use `create_load_cc_expr()` to set it.")
+  }
   cc_list <- eval(ld$load_cc_expr)
   if (is.character(cc_list)) {
     cc_list <- eval(parse(text = cc_list))
   }
   ret_string <- ""
-  if (length(ld$package) > 0 || length(ld$init_expr)) {
+  if (length(ld$setup_expr)) {
+    ret_string <- c(ret_string, 
+      "```{r setup, include = FALSE}",
+      expr_to_string(ld$setup_expr),
+      "```",
+      "")
+  }
+  ret_string <-
+    c(ret_string,
+      sprintf("```{r%s}", make_chunk_option_string(ld$chunk_opts)))
+  if (length(ld$package) > 0) {
     ret_string <-
       c(ret_string,
-        sprintf("```{r%s}", make_chunk_option_string(ld$chunk_opts)))
-    if (length(ld$package) > 0) {
-      ret_string <-
-        c(ret_string,
-          as.character(vapply(eval(ld$package),
-                       function(x) sprintf("library(%s)", as.character(x)),
-                       NA_character_)),
-          "",
-          sprintf("cc_list <- %s", deparse(ld$load_cc_expr)))
-      if (length(ld$init_expr)) {
-        ret_string <- c(ret_string, "")
-      }
-    }
-    if (length(ld$init_expr)) {
-      ret_string <-
-        c(ret_string,
-          if (deparse(ld$init_expr[[1]]) == "{") {
-            unlist(lapply(ld$init_expr[-1], function(x) c(deparse(x))))
-          } else {
-            deparse(ld$init_expr)
-          })
-    }
-    ret_string <- c(ret_string, "```")
+        as.character(vapply(eval(ld$package),
+                     function(x) sprintf("library(%s)", as.character(x)),
+                     NA_character_)),
+        "")
   }
-  ret_string <- c(ret_string,
+  if (length(ld$init_expr)) {
+    ret_string <-
+      c(ret_string,
+        expr_to_string(ld$init_expr),
+        "")
+  }
+  c(ret_string, 
+    sprintf("cc_list <- %s", deparse(ld$load_cc_expr)),
+    "```",
     depth_first_concat(cc_list, ld))
-  ret_string
 }

@@ -4,11 +4,6 @@ library(ggplot2)
 
 source("make-reference.r")
 
-if (make_reference) {
-  dir.create("reference-data", showWarnings = FALSE)
-}
-
-
 cc_list <- list(
   Linear = ggplot(anscombe, aes(x = x1, y = y1)) + geom_point(),
   `Non Linear` = ggplot(anscombe, aes(x = x2, y = y2)) + geom_point(),
@@ -21,7 +16,7 @@ saveRDS(cc_list, file = rds_file)
 
 read_rds_str <- paste0("readRDS('", rds_file, "')")
 
-ld <- listdown(readRDS("cc-list.rds"), package = "ggplot2")
+ld <- listdown(load_cc_expr = readRDS("cc-list.rds"), package = "ggplot2")
 
 ld_write_file(
   ld_rmarkdown_header(title = "The Anscombe Quartet",
@@ -44,3 +39,11 @@ expect_equal(readLines("anscombe-quartet.rmd"),
 
 unlink("anscombe-quartet.rmd")
 unlink("cc-list.rds")
+
+expect_error(
+  ld_write_file(1:3, ld, file.path("reference-data", "anscombe-quartet.rmd")))
+
+expect_error(
+  ld_write_file(ld_rmarkdown_header(title = "test"), 1:3, "bunk"))
+
+
