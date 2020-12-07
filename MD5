@@ -1,11 +1,11 @@
-cc0f58af34ffa46a34016e4a16a536d4 *DESCRIPTION
+754857158c2676ba6d858e6f9c0e5a02 *DESCRIPTION
 4e3e105b931fc0887462cd37a0240ce2 *NAMESPACE
 0903c9d5ebb844780cd1c762c038013a *NEWS.md
 7a81eb567da32d5d9bf81aff2a837376 *R/add-load-cc-expr.r
 5a3265600dfe19bb9274a114f4f46032 *R/as-yml.r
 6c8162d983a5de1cd75e26a72fad4824 *R/cc-dendro.r
 9456a77b5fb400aa3fdc02118699a520 *R/chunk-options.r
-48705bbdc6a6451b2b57d3ffab4eab76 *R/chunk-writer.r
+fbda732b99f4f70efeb2bb3151b9be5c *R/chunk-writer.r
 a25189bbc4cac102b538bf11d6540c29 *R/depth-first-pres-list-visitor.r
 1051c84417e5675126978d7e71a813a7 *R/headers.r
 eeaddb1ba4e1c6c63ae141f7548c8ed5 *R/ld-write-file.r
@@ -52,6 +52,7 @@ a44a6d13a12324a08c5a7d4d7783016f *tests/testthat/test-add-chunk-option.r
 725a69cf60a81898f6e0c90c28352b95 *tests/testthat/test-headers.r
 7026cc944235ed9b5f12cb61e38537c5 *tests/testthat/test-list.r
 047e646ad04b76a3f86ce3d4bb64f29a *tests/testthat/test-make-chunks.r
+8c0bda1cf41e51c13c21dce71c9e74df *tests/testthat/test-no-list-decorators.r
 708f0c818e6903468430bad02ed4ab0c *tests/testthat/test-no-package.r
 81e0f2ba0c157d58a4e15a4a61cd1817 *tests/testthat/test-setup-expr.r
 31cbdb16fa3a0f254c5599dac6dff179 *tests/testthat/test-write-file.r
