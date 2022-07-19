@@ -29,7 +29,27 @@
 #' @param ... default options sent to the chunks of the outputted document.
 #' @param chunk_opts a named list of options sent to the chunks of outputted
 #' documents. Note: takes priority over argument provided to ...
-#' @importFrom crayon red
+#' @examples
+#' library(ggplot2)
+#' cc <- list(
+#'     iris = iris,
+#'      Sepal.Length = list(
+#'        Sepal.Width = ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width)) +
+#'             geom_point(),
+#'        Petal.Length = ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width)) +
+#'             geom_point(),
+#'      Colored = list(
+#'           Sepal.Width = ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width,
+#'             color = Species)) + geom_point(),
+#'           Petal.Length = ggplot(iris, aes(x = Sepal.Length, y = Petal.Length,
+#'             color = Species)) + geom_point())))
+#' 
+#' header <- ld_rmarkdown_header("Test header", author = "Some Dude",
+#'                               date = "2020")
+#' 
+#' ld <- listdown(package = "ggplot2")
+#' 
+#' ld_bundle_doc(cc, header, ld)
 #' @export
 listdown <- function(package = NULL,
                      decorator = list(),
@@ -53,19 +73,19 @@ listdown <- function(package = NULL,
 
   not_r_chunk_opts <- not_r_chunk_opts(names(chunk_opts))
   if (length(not_r_chunk_opts) > 0) {
-    stop(red("Unrecognized options:\n\t",
-             paste(not_r_chunk_opts, collapse = "\n\t"),
-             "\n", sep = ""))
+    stop("Unrecognized options:\n\t",
+         paste(not_r_chunk_opts, collapse = "\n\t"),
+         "\n", sep = "")
   }
 
   # Check the chunk options of decorator_chunk_opts.
   for (i in seq_along(decorator_chunk_opts)) {
     not_r_chunk_opts <- not_r_chunk_opts(names(decorator_chunk_opts[[i]]))
     if (length(not_r_chunk_opts) > 0) {
-      stop(red("Unrecognized options for element type",
-               names(decorator_chunk_opts)[i], ":\n\t",
-               paste(not_r_chunk_opts, collapse = "\n\t"),
-               "\n", sep = ""))
+      stop("Unrecognized options for element type",
+           names(decorator_chunk_opts)[i], ":\n\t",
+           paste(not_r_chunk_opts, collapse = "\n\t"),
+           "\n", sep = "")
     }
   }
   if ( !("decorator" %in% names(match.call())) ) {
@@ -97,22 +117,21 @@ listdown <- function(package = NULL,
   ret
 }
 
-#' @importFrom crayon yellow bold
 #' @export
 print.listdown <- function(x, ...) {
-  cat(bold("\nListdown object description\n"))
+  cat("\nListdown object description\n")
   cat("\n")
   if ("package" %in% names(x)) {
-    cat(bold("    Package(s) imported:\n"))
+    cat("    Package(s) imported:\n")
     for (package in x$package) {
       cat("\t", package, "\n", sep = "")
     }
   } else {
-    warning(yellow("No packages imported."))
+    warning("No packages imported.")
   }
   if ("setup_expr" %in% names(x)) {
     cat("\n")
-    cat(bold("    Setup expression(s) (run before packages are loaded):\n"))
+    cat("    Setup expression(s) (run before packages are loaded):\n")
     cat("\t")
     if (length(x$setup_expr) == 0) {
       cat("(none)\n")
@@ -122,7 +141,7 @@ print.listdown <- function(x, ...) {
   }
   if ("init_expr" %in% names(x)) {
     cat("\n")
-    cat(bold("    Initial expression(s) (run after packages are loaded):\n"))
+    cat("    Initial expression(s) (run after packages are loaded):\n")
     cat("\t")
     if (length(x$init_expr) == 0) {
       cat("(none)\n")
@@ -132,14 +151,14 @@ print.listdown <- function(x, ...) {
   }
   if ("load_cc_expr" %in% names(x)) {
     cat("\n")
-    cat(bold("    Expression to read data:\n"))
+    cat("    Expression to read data:\n")
     cat("\t", deparse(x$load_cc_expr), "\n", sep = "")
   } else {
-    warning(yellow("No load_cc expression provided."))
+    warning("No load_cc expression provided.")
   }
   if ("decorator" %in% names(x)) {
     cat("\n")
-    cat(bold("    Decorator(s):\n"))
+    cat("    Decorator(s):\n")
     if (length(x$decorator) == 0) {
       cat("\t(none)\n")
     } else {
@@ -147,7 +166,7 @@ print.listdown <- function(x, ...) {
       cv <- c("Method", as.vector(unlist(sapply(x$decorator, deparse))))
       for (i in seq_along(ns)) {
         if (i == 1) {
-          cat("\t", bold(ns[i]), "\t", bold(cv[i]), "\n", sep = "")
+          cat("\t", ns[i], "\t", cv[i], "\n", sep = "")
         } else {
           cat("\t", ns[i], "\t", cv[i], "\n", sep = "")
         }
@@ -156,12 +175,12 @@ print.listdown <- function(x, ...) {
   }
   if ("default_decorator" %in% names(x)) {
     cat("\n")
-    cat(bold("    Defaut decorator:\n"))
+    cat("    Default decorator:\n")
     cat("\t", deparse(x$default_decorator), "\n", sep = "")
   }
   if ("chunk_opts" %in% names(x)) { 
     cat("\n")
-    cat(bold("    Chunk option(s):\n"))
+    cat("    Chunk option(s):\n")
     if (length(x$chunk_opts) == 0) {
       cat("\t(none)\n")
     } else {
@@ -174,12 +193,12 @@ print.listdown <- function(x, ...) {
   }
   if ("decorator_chunk_opts" %in% names(x)) {
     cat("\n")
-    cat(bold("    Decorator chunk option(s):\n"))
+    cat("    Decorator chunk option(s):\n")
     if (length(x$decorator_chunk_opts) == 0) {
       cat("\t(none)\n")
     } else {
       for (i in seq_along(x$decorator_chunk_opts)) {
-        cat("\t", bold("Type: "), names(x$decorator_chunk_opts)[i], ":", 
+        cat("\t", "Type: ", names(x$decorator_chunk_opts)[i], ":", 
             sep = "")
         ns <- names(x$decorator_chunk_opts[[i]])
         ns[ns == ''] <- "(chunk name)"
@@ -189,7 +208,7 @@ print.listdown <- function(x, ...) {
         cv <- c("Value", cv)
         for (j in seq_along(ns)) {
           if (j == 1) {
-            cat("\n\t\t", bold(ns[j]), " ", bold(cv[j]))
+            cat("\n\t\t", ns[j], " ", cv[j])
           } else {
             cat("\n\t\t", ns[j], " ", cv[j])
           }
@@ -211,16 +230,17 @@ print.listdown <- function(x, ...) {
 #' @param ld the listdown object that provides
 #' information on how a presentation object should be displayed in the
 #' output.
+#' @param rmd_dir the R Markdown directory.
 #' @seealso \code{\link{listdown}}
 #' @export
-ld_make_chunks <- function(ld) {
+ld_make_chunks <- function(ld, rmd_dir) {
   UseMethod("ld_make_chunks", ld)
 }
 
-#' @importFrom crayon red
-ld_make_chunks.default <- function(ld) {
-  stop(red("Don't know how to render an object of class ",
-           paste(class(ld), collapse = ":"), ".", sep = ""))
+
+ld_make_chunks.default <- function(ld, rmd_dir) {
+  stop("Don't know how to render an object of class ",
+       paste(class(ld), collapse = ":"), ".", sep = "")
 }
 
 expr_to_string <- function(expr) {
@@ -232,15 +252,27 @@ expr_to_string <- function(expr) {
 }
 
 #' @export
-ld_make_chunks.listdown <- function(ld) {
+ld_make_chunks.listdown <- function(ld, rmd_dir = ".") {
   if (is.null(ld$load_cc_expr)) {
     stop("The load_cc_expr needs to be specified. ",
          "Use `create_load_cc_expr()` to set it.")
   }
-  cc_list <- eval(ld$load_cc_expr)
-  if (is.character(cc_list)) {
-    cc_list <- eval(parse(text = cc_list))
-  }
+
+  wd <- getwd()
+  make_dirs_as_needed(path_abs(rmd_dir))
+  cc_list <- tryCatch(
+    {
+      setwd(rmd_dir)
+      ret <- eval(ld$load_cc_expr)
+      setwd(wd)
+      ret
+    },
+    error = function(e) {
+      setwd(wd)
+      stop("Can't evaluate ", expr_to_string(ld$load_cc_expr), 
+           " from directory ", rmd_dir)
+    })
+  
   ret_string <- ""
   if (length(ld$setup_expr)) {
     ret_string <- c(ret_string, 
@@ -267,7 +299,7 @@ ld_make_chunks.listdown <- function(ld) {
         "")
   }
   c(ret_string, 
-    sprintf("cc_list <- %s", deparse(ld$load_cc_expr)),
+    sprintf("cc_list <- %s", paste(deparse(ld$load_cc_expr), collapse = "\n")),
     "```",
     depth_first_concat(cc_list, ld))
 }
