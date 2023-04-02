@@ -72,6 +72,8 @@ not_r_chunk_opts <- function(x) {
 #' @param ... named chunk options and their values.
 #' @param chunk_opts list of chunk options can be specified. Takes priority
 #' over arguments provided to ...
+#' @return An updated version of the `pres_obj` object, with updated
+#' chunk options.
 #' @export
 ld_chunk_opts <- function(pres_obj, chunk_name = NULL, ..., chunk_opts = NULL) {
   a <- attributes(pres_obj)

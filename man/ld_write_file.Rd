@@ -16,6 +16,9 @@ output.}
 
 \item{file_name}{the output file to write to.}
 }
+\value{
+The invisible value `TRUE` indicating the write was successful.
+}
 \description{
 This function takes header information and a listdown 
 object and writes to a specified file.

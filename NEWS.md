@@ -1,6 +1,6 @@
 # listdown 0.2.8
 
-* Inital release to CRAN.
+* Initial release to CRAN.
 
 # listdown 0.2.9
 
@@ -46,7 +46,7 @@
 
 # listdown 0.4.0
 
-* Mulitple bug fixes.
+* Multiple bug fixes.
 * The listdown() function now supports a `setup_expr` which, if specified 
 is placed in a setup block.
 
@@ -64,3 +64,8 @@ is placed in a setup block.
 
 * Fixed a path issue.
 * Fixed a regression test failure flagged by CRAN.
+
+# listdown 0.5.6
+
+* Added documention describing return values.
+* Using `on.exit()` with setwd()

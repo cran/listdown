@@ -24,6 +24,7 @@ ldb <- ld_bundle_doc(cc, header, ld)
 write_if_make_reference(ldb, "listdown-page-bundle.rds")
 
 test_that("Create page bundle works", {
+  skip_on_cran()
   expect_equal(ldb, read_reference("listdown-page-bundle.rds"))
 })
 

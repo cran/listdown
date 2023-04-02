@@ -13,6 +13,9 @@ output.}
 
 \item{rmd_dir}{the R Markdown directory.}
 }
+\value{
+The string containing the R Markdown content.
+}
 \description{
 After a presentation list and listdown object have been
 constructed the chunks can be rendered to a string, which can be appended

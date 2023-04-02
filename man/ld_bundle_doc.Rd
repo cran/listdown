@@ -14,6 +14,19 @@ ld_bundle_doc(cc, header, ld)
 \item{ld}{a `listdown` object describing how to present the computational
 components.}
 }
+\value{
+An S3 object of type `ld_page_bundle`.
+\itemize{
+  \item cc the computational components associated with the document.
+  \item ld the `listdown` object assoiated with the document.
+  \item header the `listdown_header` object associated with the document.
+  \item cc_in_memory a logical value indicating if the computational
+   components are currently stored in memory. If TRUE, then they will
+   be written to the disk upon creation of the document. Otherwise,
+   the `load_cc_expr` in the `ld` element should have the expression to
+   load the components.
+}
+}
 \description{
 A page bundle encapsulates the computational components, 
 R Markdown header, and listdown object. Together, these three objects 
@@ -44,4 +57,6 @@ ld_bundle_doc(cc, header, ld)
 }
 \seealso{
 ld_create_document
+
+\code{\link{listdown}}
 }

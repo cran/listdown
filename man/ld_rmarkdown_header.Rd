@@ -21,6 +21,10 @@ ld_rmarkdown_header(
 \item{output}{the output format of the page. If NULL then no output format.
 The default is an html document.}
 }
+\value{
+An S3 instance of class `listdown_header` containing the 
+R Markdown header data.
+}
 \description{
 Output an R Markdown header with specified parameters.
 }

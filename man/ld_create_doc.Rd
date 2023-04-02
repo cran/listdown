@@ -51,6 +51,9 @@ the browser will open for you to examine the output.}
 
 \item{...}{options to send to the rmarkdown::render() function.}
 }
+\value{
+The `ldb` object passed (as `invisible()`).
+}
 \description{
 This function creates a document, defined by a listdown bundle
 in a specified location on disk and, optionally, opens the document in the

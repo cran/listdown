@@ -20,6 +20,7 @@ last_index_as_list <- function(loc) {
 #' and when an element type is not a list the class information substituted
 #' for the object.
 #' @param x a named list of computational components.
+#' @return A yaml string with the structure of a `listdown` object.
 #' @importFrom yaml as.yaml
 #' @examples
 #' if (require("ggplot2")) {

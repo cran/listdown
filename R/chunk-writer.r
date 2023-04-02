@@ -29,6 +29,17 @@
 #' @param ... default options sent to the chunks of the outputted document.
 #' @param chunk_opts a named list of options sent to the chunks of outputted
 #' documents. Note: takes priority over argument provided to ...
+#' @return An S3 object of type `listdown`
+#' \itemize{
+#'   \item load_cc_expr - the R expression to load computational components.
+#'   \item decorator - the list element decorators.
+#'   \item package - package dependencies for the document.
+#'   \item init_expr - the R expression to run initially.
+#'   \item setup_expr - the R expression to run on setup.
+#'   \item decorator_chunk_options - the R Markdown chunk options.
+#'   \item default_decorator - the set of default decorators.
+#'   \item chunk_opts - the default R Markdown chunk options.
+#' }
 #' @examples
 #' library(ggplot2)
 #' cc <- list(
@@ -231,6 +242,7 @@ print.listdown <- function(x, ...) {
 #' information on how a presentation object should be displayed in the
 #' output.
 #' @param rmd_dir the R Markdown directory.
+#' @return The string containing the R Markdown content.
 #' @seealso \code{\link{listdown}}
 #' @export
 ld_make_chunks <- function(ld, rmd_dir) {
@@ -260,15 +272,14 @@ ld_make_chunks.listdown <- function(ld, rmd_dir = ".") {
 
   wd <- getwd()
   make_dirs_as_needed(path_abs(rmd_dir))
+  on.exit(setwd(wd))
   cc_list <- tryCatch(
     {
       setwd(rmd_dir)
       ret <- eval(ld$load_cc_expr)
-      setwd(wd)
       ret
     },
     error = function(e) {
-      setwd(wd)
       stop("Can't evaluate ", expr_to_string(ld$load_cc_expr), 
            " from directory ", rmd_dir)
     })

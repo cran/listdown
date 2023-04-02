@@ -9,6 +9,10 @@ ld_cc_dendro(x)
 \arguments{
 \item{x}{a named list of computational components}
 }
+\value{
+A string, with class `ld_cc_dendro`, that shows the hierarchical
+structure of the computational components (a list).
+}
 \description{
 This function creates text dendrograms from
 a list of computational components. It is useful for

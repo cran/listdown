@@ -11,11 +11,15 @@ ld_site_yaml(site_name, tab_name, rmd_name, navbar_title = site_name)
 
 \item{tab_name}{the name of the tabs on the site.}
 
-\item{rmd_name}{the name of the Rmarkdown files that will generate the
+\item{rmd_name}{the name of the R Markdown files that will generate the
 respective tabs.}
 
 \item{navbar_title}{the title of the navigation bar (Default is the
 `site_name` argument.}
+}
+\value{
+A list with yaml components for creating a site with multiple
+tabs.
 }
 \description{
 Create a Minimal Site YAML List

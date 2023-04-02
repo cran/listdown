@@ -50,6 +50,19 @@ presentation list.}
 \item{chunk_opts}{a named list of options sent to the chunks of outputted
 documents. Note: takes priority over argument provided to ...}
 }
+\value{
+An S3 object of type `listdown`
+\itemize{
+  \item load_cc_expr - the R expression to load computational components.
+  \item decorator - the list element decorators.
+  \item package - package dependencies for the document.
+  \item init_expr - the R expression to run initially.
+  \item setup_expr - the R expression to run on setup.
+  \item decorator_chunk_options - the R Markdown chunk options.
+  \item default_decorator - the set of default decorators.
+  \item chunk_opts - the default R Markdown chunk options.
+}
+}
 \description{
 A listdown object provides information for how a presentation
 list should be used to create an R Markdown document. It requires an

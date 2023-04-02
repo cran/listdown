@@ -18,6 +18,10 @@ corresponding to no chunk name.}
 \item{chunk_opts}{list of chunk options can be specified. Takes priority
 over arguments provided to ...}
 }
+\value{
+An updated version of the `pres_obj` object, with updated
+chunk options.
+}
 \description{
 This function allows the user to set chunk options for
 individual elements of a presentation list.

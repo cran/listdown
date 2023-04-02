@@ -11,6 +11,10 @@ ld_workflowr_header(title, toc = FALSE)
 
 \item{toc}{should the table of contents be generated? Default FALSE.}
 }
+\value{
+An S3 instance of class `listdown_header` containing the 
+R Markdown `workflowr` header data.
+}
 \description{
 Output a workflowr R Markdown header with specified title.
 }

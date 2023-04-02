@@ -6,6 +6,8 @@
 #' creating a dendrogram of the the computational components of a listdown
 #' object allowing the user to view the components hierarchically.
 #' @param x a named list of computational components
+#' @return A string, with class `ld_cc_dendro`, that shows the hierarchical
+#' structure of the computational components (a list).
 #' @examples
 #' if (require("ggplot2")) {
 #' 

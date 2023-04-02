@@ -6,6 +6,7 @@
 #' @param .x an object to add class and attribute information to.
 #' @param new_class the name of the class to be prepended to .x.
 #' @param ... the attributes to attach to .x.
+#' @return The object with updated class information.
 #' @export
 class_and_tag <- function(.x, new_class, ...) {
   if (!is.character(new_class)) {

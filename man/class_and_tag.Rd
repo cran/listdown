@@ -13,6 +13,9 @@ class_and_tag(.x, new_class, ...)
 
 \item{...}{the attributes to attach to .x.}
 }
+\value{
+The object with updated class information.
+}
 \description{
 listdown decorators map list element to functions. This
 function is provided for convenience to prepend a class and attributes,

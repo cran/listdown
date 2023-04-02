@@ -5,6 +5,8 @@
 #' @param date the date for the page. The default is NULL - no date.
 #' @param output the output format of the page. If NULL then no output format.
 #' The default is an html document.
+#' @return An S3 instance of class `listdown_header` containing the 
+#' R Markdown header data.
 #' @export
 ld_rmarkdown_header <- function(title,
                                 author = NULL,
@@ -28,6 +30,8 @@ ld_rmarkdown_header <- function(title,
 #' @description Output a workflowr R Markdown header with specified title.
 #' @param title the title of the page.
 #' @param toc should the table of contents be generated? Default FALSE.
+#' @return An S3 instance of class `listdown_header` containing the 
+#' R Markdown `workflowr` header data.
 #' @export
 ld_workflowr_header <- function(title, toc = FALSE) {
   ret <- list(title = title,

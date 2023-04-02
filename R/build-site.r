@@ -10,6 +10,18 @@
 #' @param header a `list` with the header information for the document.
 #' @param ld a `listdown` object describing how to present the computational
 #' components.
+#' @return An S3 object of type `ld_page_bundle`.
+#' \itemize{
+#'   \item cc the computational components associated with the document.
+#'   \item ld the `listdown` object assoiated with the document.
+#'   \item header the `listdown_header` object associated with the document.
+#'   \item cc_in_memory a logical value indicating if the computational
+#'    components are currently stored in memory. If TRUE, then they will
+#'    be written to the disk upon creation of the document. Otherwise,
+#'    the `load_cc_expr` in the `ld` element should have the expression to
+#'    load the components.
+#' }
+#' @seealso \code{\link{listdown}}
 #' @examples
 #' library(ggplot2)
 #' cc <- list(
@@ -108,13 +120,15 @@ remove_file_extension <- function(x) {
 #' 
 #' @param site_name the name of the site.
 #' @param tab_name the name of the tabs on the site.
-#' @param rmd_name the name of the Rmarkdown files that will generate the
+#' @param rmd_name the name of the R Markdown files that will generate the
 #' respective tabs.
 #' @param navbar_title the title of the navigation bar (Default is the
 #' `site_name` argument.
 #' @importFrom checkmate assert check_character check_null
 #' @importFrom yaml as.yaml
-#' @export
+#' @return A list with yaml components for creating a site with multiple
+#' tabs.
+#' @export 
 ld_site_yaml <- 
   function(site_name, tab_name, rmd_name, navbar_title = site_name) {
 
@@ -167,7 +181,7 @@ make_dirs_as_needed <- function(dir_paths) {
 #' @title Build an html Site from listdown Document Bundles
 #'
 #' @description This function creates an html website with each tab in the
-#' page being desribed by a listdown document bundle.
+#' page being described by a listdown document bundle.
 #' @param doc_bundles a named list of document bundles. There can be up to one
 #' unnamed bundle, which will be assumed to correspond to an index.rmd file.
 #' @param site_yaml a list of site information, which will be written
@@ -178,7 +192,7 @@ make_dirs_as_needed <- function(dir_paths) {
 #' default an "rmarkdown" file is written to `tempdir()`.
 #' @param data_dir the location where data can be found for each bundle.
 #' If the data is held in memory for a listdown document bundle, then it will
-#' be written to the specified directory. If mulitple directories are specified,
+#' be written to the specified directory. If multiple directories are specified,
 #' then the directory is specified per bundle, with index recycling used if
 #' the number of directories is not the same as the number of bundles.
 #' @param html_dir the location of the rendered document, relative to the 
@@ -197,6 +211,7 @@ make_dirs_as_needed <- function(dir_paths) {
 #' be created? This can be set to `FALSE` when data already resides on disk
 #' to verify that it is not being created and written.
 #' @param ... argument to be passed to the `rmarkdown::render_site()` function.
+#' @return The path to the created website.
 #' @seealso ld_bundle_doc ld_create_doc
 #' @importFrom checkmate assert check_character check_list
 #' @importFrom tibble tibble as_tibble
@@ -349,6 +364,7 @@ recycle <- function(ind, len) {
 #' @param view should the output document be opened after rendering? By 
 #' default, if `render_doc` is `TRUE` and this argument is `TRUE` then
 #' the browser will open for you to examine the output.
+#' @return The `ldb` object passed (as `invisible()`).
 #' @param ... options to send to the rmarkdown::render() function.
 #' @importFrom checkmate assert check_class
 #' @importFrom rmarkdown render

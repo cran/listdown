@@ -9,6 +9,9 @@ as_ld_yml(x)
 \arguments{
 \item{x}{a named list of computational components.}
 }
+\value{
+A yaml string with the structure of a `listdown` object.
+}
 \description{
 Create an object of type yaml::yml from a list of
 computational components. The function recursively descends into the list

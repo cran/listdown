@@ -33,7 +33,7 @@ default an "rmarkdown" file is written to `tempdir()`.}
 
 \item{data_dir}{the location where data can be found for each bundle.
 If the data is held in memory for a listdown document bundle, then it will
-be written to the specified directory. If mulitple directories are specified,
+be written to the specified directory. If multiple directories are specified,
 then the directory is specified per bundle, with index recycling used if
 the number of directories is not the same as the number of bundles.}
 
@@ -59,9 +59,12 @@ to verify that it is not being created and written.}
 
 \item{...}{argument to be passed to the `rmarkdown::render_site()` function.}
 }
+\value{
+The path to the created website.
+}
 \description{
 This function creates an html website with each tab in the
-page being desribed by a listdown document bundle.
+page being described by a listdown document bundle.
 }
 \seealso{
 ld_bundle_doc ld_create_doc

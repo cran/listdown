@@ -9,6 +9,7 @@
 #' information on how a presentation object should be displayed in the
 #' output.
 #' @param file_name the output file to write to.
+#' @return The invisible value `TRUE` indicating the write was successful.
 #' @importFrom checkmate assert check_class check_character
 #' @importFrom yaml as.yaml
 #' @export
@@ -38,4 +39,6 @@ ld_write_file <- function(rmd_header, ld, file_name) {
   }
 
   writeLines(c(rmd_header, ld), file_name)
+
+  invisible(TRUE)
 }

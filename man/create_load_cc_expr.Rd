@@ -10,6 +10,9 @@ create_load_cc_expr(load_cc_expr)
 \item{load_cc_expr}{a string or expression that should be use to load 
 the computational components.}
 }
+\value{
+An call object that loads a computational component when evaluated.
+}
 \description{
 An expression to load a computational component can be either
 a raw expression, a variable holding the expression, or a string. The
